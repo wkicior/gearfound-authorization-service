@@ -1,0 +1,26 @@
+
+
+security:
+  oauth2:
+    client:
+      client-id: acme
+      client-secret: acmesecret
+      scope: openid, read, write
+      authorized-grant-types: authorization_code,refresh_token,password
+
+
+#security:
+#  oauth2:
+#    client:
+#      clientId:
+#      #TODO: replace with variable
+#      clientSecret:
+#      accessTokenUri: https://graph.facebook.com/oauth/access_token
+#      userAuthorizationUri: https://www.facebook.com/dialog/oauth
+#      tokenName: oauth_token
+#      authenticationScheme: query
+#      clientAuthenticationScheme: form
+#    resource:
+server:
+  port: 8090
+#      userInfoUri: https://graph.facebook.com/me

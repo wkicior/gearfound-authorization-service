@@ -31,6 +31,11 @@ dependencies {
 	implementation('org.springframework.cloud:spring-cloud-starter-oauth2')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.security:spring-security-test')
+	compile('javax.xml.bind:jaxb-api:2.3.1')
+	compile('com.sun.xml.bind:jaxb-core:2.3.0.1')
+	compile('com.sun.xml.bind:jaxb-impl:2.3.1')
+
+	compile('javax.activation:activation:1.1')
 }
 
 dependencyManagement {
