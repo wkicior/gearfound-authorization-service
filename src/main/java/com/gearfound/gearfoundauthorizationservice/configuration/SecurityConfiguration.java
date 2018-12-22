@@ -3,8 +3,7 @@ package com.gearfound.gearfoundauthorizationservice.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +21,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @EnableWebSecurity
+//@EnableWebFluxSecurity
+//@EnableReactiveMethodSecurity
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
@@ -35,8 +36,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 
+
     @Override
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    //@Order(Ordered.HIGHEST_PRECEDENCE)
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .sessionManagement()
@@ -44,8 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                //.antMatchers("/user").permitAll()
-                .antMatchers("/signup").permitAll()
+                .antMatchers( HttpMethod.POST, "/user").permitAll()
                 .antMatchers("/oauth/token").permitAll()
                 //.antMatchers("/api/**").authenticated()
                 //.antMatchers("/api/**").hasRole("USER")
@@ -54,7 +55,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .realmName("CRM_REALM");
     }
-
 
     @Override
     @Bean
