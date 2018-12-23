@@ -1,5 +1,6 @@
 package com.gearfound.gearfoundauthorizationservice.configuration;
 
+import com.gearfound.gearfoundauthorizationservice.users.UserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,12 +25,16 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private final AuthenticationManager authenticationManager;
 
+    private final UserDetailsService userDetailsService;
+
     public AuthorizationServerConfiguration(TokenStore tokenStore,
                                             UserApprovalHandler userApprovalHandler,
-                                            @Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager) {
+                                            @Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager,
+                                            UserDetailsService userDetailsService) {
         this.tokenStore = tokenStore;
         this.userApprovalHandler = userApprovalHandler;
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -48,8 +53,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore).userApprovalHandler(userApprovalHandler)
-                .authenticationManager(authenticationManager);
+                .authenticationManager(authenticationManager)
+                .userDetailsService(userDetailsService);
     }
+
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {

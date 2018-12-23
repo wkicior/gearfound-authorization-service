@@ -4,8 +4,6 @@ spring:
       port: 27017
       host: gearfound-authorization-mongo
       database: gearfound-autorization
-  profiles:
-    active: local
 
 security:
   oauth2:

@@ -2,7 +2,6 @@ package com.gearfound.gearfoundauthorizationservice.users;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -19,11 +18,10 @@ public class User {
     private String id;
 
     @NotNull
-    private String email;
+    private String username;
 
     @NotNull
     private String password;
 
-    @DBRef
     private List<Role> roles;
 }

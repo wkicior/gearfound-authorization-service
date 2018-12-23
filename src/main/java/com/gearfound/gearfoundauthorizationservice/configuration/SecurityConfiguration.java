@@ -1,8 +1,11 @@
 package com.gearfound.gearfoundauthorizationservice.configuration;
 
+import com.gearfound.gearfoundauthorizationservice.users.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,24 +24,22 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @EnableWebSecurity
-//@EnableWebFluxSecurity
-//@EnableReactiveMethodSecurity
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private ClientDetailsService clientDetailsService;
 
     @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().passwordEncoder(NoOpPasswordEncoder.getInstance())
-                .withUser("crmadmin").password("crmpass").roles("ADMIN","USER").and()
-                .withUser("crmuser").password("pass123").roles("USER");
-    }
-
-
+    private UserDetailsService userDetailsService;
 
     @Override
-    //@Order(Ordered.HIGHEST_PRECEDENCE)
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+    
+    @Override
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .sessionManagement()
