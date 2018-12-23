@@ -4,6 +4,7 @@ import com.gearfound.gearfoundauthorizationservice.users.UserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -27,21 +28,25 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private final UserDetailsService userDetailsService;
 
+    private final PasswordEncoder passwordEncoder;
+
+
     public AuthorizationServerConfiguration(TokenStore tokenStore,
                                             UserApprovalHandler userApprovalHandler,
                                             @Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager,
-                                            UserDetailsService userDetailsService) {
+                                            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.tokenStore = tokenStore;
         this.userApprovalHandler = userApprovalHandler;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("crmClient1")
-                .secret("crmSuperSecret")
+                .secret(passwordEncoder.encode("crmSuperSecret"))
                 .authorizedGrantTypes("password", "refresh_token")
                 .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
                 .scopes("openid", "read", "write", "trust")
@@ -60,6 +65,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-        oauthServer.realm(REALM);
+        oauthServer.realm(REALM).passwordEncoder(passwordEncoder);
     }
+
 }
