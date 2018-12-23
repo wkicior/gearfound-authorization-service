@@ -23,8 +23,6 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 
     @Override
     public MongoClient mongoClient() {
-        return new MongoClient("localhost", 27018);
-
-//        return new MongoClient("gearfound-authorization-mongo", 27017);
+        return new MongoClient("gearfound-authorization-mongo", 27017);
     }
 }

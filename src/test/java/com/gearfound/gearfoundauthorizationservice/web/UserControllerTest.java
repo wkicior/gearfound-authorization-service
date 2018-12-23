@@ -23,8 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-//@WebFluxTest
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
@@ -34,9 +32,6 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired private ObjectMapper mapper;
-
-//    @Autowired
-//    protected WebTestClient webClient;
 
     @MockBean
     UserService userService;
@@ -50,9 +45,9 @@ class UserControllerTest {
     void postUser() throws Exception {
         //given
         User user = User.builder()
-                .email("some@test.pl")
+                .username("some@test.pl")
                 .password("mypass")
-                .roles(Collections.singletonList(new Role(null, "USER")))
+                .roles(Collections.singletonList(new Role("USER")))
                 .build();
         when(userService.addUser(any(User.class))).thenReturn(user);
 

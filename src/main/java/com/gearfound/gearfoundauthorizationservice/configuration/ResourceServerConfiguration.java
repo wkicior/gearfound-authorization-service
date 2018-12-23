@@ -1,6 +1,7 @@
 package com.gearfound.gearfoundauthorizationservice.configuration;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -14,9 +15,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         //-- define URL patterns to enable OAuth2 security
         http.
                 anonymous().disable()
-                .requestMatchers().antMatchers("/api/**")
+                .requestMatchers().antMatchers("/user")
                 .and().authorizeRequests()
-                .antMatchers("/api/**").access("hasRole('ADMIN') or hasRole('USER')")
+                .antMatchers(HttpMethod.GET, "/user").access("hasRole('ADMIN') or hasRole('USER')")
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 }

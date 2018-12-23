@@ -62,10 +62,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .userDetailsService(userDetailsService);
     }
 
-
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
         oauthServer.realm(REALM).passwordEncoder(passwordEncoder);
     }
-
 }
