@@ -1,8 +1,8 @@
 package com.gearfound.gearfoundauthorizationservice.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gearfound.gearfoundauthorizationservice.users.Role;
 import com.gearfound.gearfoundauthorizationservice.users.User;
+import com.gearfound.gearfoundauthorizationservice.users.UserAlreadyExistsException;
 import com.gearfound.gearfoundauthorizationservice.users.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -45,13 +43,31 @@ class UserControllerTest {
     void postUser() throws Exception {
         //given
         User user = User.builder()
-                .username("some@test.pl")
+                .email("some@test.pl")
                 .password("mypass")
-                .roles(Collections.singletonList(new Role("USER")))
                 .build();
         when(userService.addUser(any(User.class))).thenReturn(user);
 
         //when, then
-        mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(user))).andExpect(status().isCreated()).andExpect(content().json(mapper.writeValueAsString(user)));
+        mockMvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(user)))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(mapper.writeValueAsString(user)));
+    }
+
+    @Test
+    void postUserWhichAlreadyExists() throws Exception {
+        //given
+        User user = User.builder()
+                .email("some@test.pl")
+                .password("mypass")
+                .build();
+        when(userService.addUser(any(User.class))).thenThrow(new UserAlreadyExistsException("already exists"));
+
+        //when, then
+        mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(user)))
+                .andExpect(status().isConflict());
     }
 }

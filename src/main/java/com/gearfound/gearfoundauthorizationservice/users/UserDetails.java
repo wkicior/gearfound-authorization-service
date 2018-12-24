@@ -11,11 +11,11 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
     private Collection<? extends GrantedAuthority> authorities;
     private String password;
-    private String username;
+    private String email;
 
     public UserDetails(User user){
         this.password = user.getPassword();
-        this.username = user.getUsername();
+        this.email = user.getEmail();
         this.authorities = translate(user.getRoles());
     }
 
@@ -41,7 +41,7 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

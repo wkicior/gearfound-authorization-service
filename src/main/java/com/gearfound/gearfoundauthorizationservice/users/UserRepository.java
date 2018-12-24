@@ -3,7 +3,9 @@ package com.gearfound.gearfoundauthorizationservice.users;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-    User findByUsername(String email);
+    Optional<User> findByEmail(String email);
 }
