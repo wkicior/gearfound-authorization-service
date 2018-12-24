@@ -2,6 +2,7 @@ package com.gearfound.gearfoundauthorizationservice.configuration;
 
 import com.gearfound.gearfoundauthorizationservice.users.UserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,12 +14,20 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import javax.validation.constraints.NotNull;
+
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-    private static String REALM="CRM_REALM";
-    private static final int ONE_DAY = 60 * 60 * 24;
-    private static final int THIRTY_DAYS = 60 * 60 * 24 * 30;
+    @NotNull
+    @Value("${security.oauth2.client.client-id}")
+    private String clientId;
+
+    @NotNull
+    @Value("${security.oauth2.client.client-secret}")
+    private String secret;
+
+    private static String REALM = "GEARFOUND_REALM";
 
     private final TokenStore tokenStore;
 
@@ -45,14 +54,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("crmClient1")
-                .secret(passwordEncoder.encode("crmSuperSecret"))
+                .withClient(clientId)
+                .secret(passwordEncoder.encode(secret))
                 .authorizedGrantTypes("password", "refresh_token")
                 .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
                 .scopes("openid", "read", "write", "trust")
-                //.accessTokenValiditySeconds(ONE_DAY)
                 .accessTokenValiditySeconds(300)
-                .refreshTokenValiditySeconds(THIRTY_DAYS);
+                .refreshTokenValiditySeconds(30 * 60);
     }
 
     @Override

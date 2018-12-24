@@ -1,3 +1,6 @@
+server:
+  port: 8090
+
 spring:
   data:
     mongodb:
@@ -8,10 +11,8 @@ spring:
 security:
   oauth2:
     client:
-      client-id: acme
-      client-secret: acmesecret
-      scope: openid, read, write
-      authorized-grant-types: authorization_code,refresh_token,password
+      client-id: crmClient1
+      client-secret: crmSuperSecret
 
 
 #security:
@@ -26,6 +27,4 @@ security:
 #      authenticationScheme: query
 #      clientAuthenticationScheme: form
 #    resource:
-server:
-  port: 8090
 #      userInfoUri: https://graph.facebook.com/me
