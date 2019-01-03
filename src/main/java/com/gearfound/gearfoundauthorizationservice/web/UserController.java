@@ -25,6 +25,7 @@ public class UserController {
         return principal;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public User saveUser(@RequestBody @Valid User user) {
