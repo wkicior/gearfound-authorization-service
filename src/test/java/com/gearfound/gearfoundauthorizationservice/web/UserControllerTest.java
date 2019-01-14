@@ -70,4 +70,18 @@ class UserControllerTest {
                 .content(mapper.writeValueAsString(user)))
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    void postUserWithNotValidEmail() throws Exception {
+        //given
+        User user = User.builder()
+                .email("some")
+                .password("mypass")
+                .build();
+
+        //when, then
+        mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest());
+    }
 }
