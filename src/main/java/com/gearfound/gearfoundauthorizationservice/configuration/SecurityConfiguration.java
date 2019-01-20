@@ -45,6 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers( HttpMethod.POST, "/user").permitAll()
                 .antMatchers("/oauth/token").permitAll()
+                .antMatchers("/oauth/refresh-token/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
                 .anyRequest().authenticated()
                 .and()
