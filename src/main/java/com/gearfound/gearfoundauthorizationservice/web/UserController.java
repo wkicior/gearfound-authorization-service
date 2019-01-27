@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -21,8 +23,12 @@ public class UserController {
     }
 
     @GetMapping()
-    public Principal getUser(Principal principal) {
-        return principal;
+    public Map<String, String> getUser(Principal principal) {
+        User user = userService.getUserByName(principal.getName());
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("name", principal.getName());
+        map.put("id", user.getId());
+        return map;
     }
 
     @CrossOrigin(origins = "http://localhost:4200")

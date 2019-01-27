@@ -20,4 +20,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.userRepository.save(user);
     }
+
+    public User getUserByName(String name) {
+        return userRepository.findByEmail(name).orElseThrow(UserNotFoundException::new);
+    }
 }

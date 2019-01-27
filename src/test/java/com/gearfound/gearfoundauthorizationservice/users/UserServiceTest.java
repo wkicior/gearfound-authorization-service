@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -51,9 +52,28 @@ class UserServiceTest {
         //when, then
         assertThrows(UserAlreadyExistsException.class, () -> userService.addUser(user));
 
-        //then
+    }
 
+    @Test
+    void getUserByEmail() {
+        //given
+        User user = anUser().email(EMAIL).build();
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
 
+        //when
+        User returnedUser = userService.getUserByName(EMAIL);
+
+        //when
+        assertThat(returnedUser).isEqualTo(user);
+    }
+
+    @Test
+    void getUserByEmailThrosUserNotFoundException() {
+        //given
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+
+        //when, then
+        assertThrows(UserNotFoundException.class, () -> userService.getUserByName(EMAIL));
     }
 
     private User.UserBuilder anUser() {

@@ -41,15 +41,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeRequests()
+            .csrf().disable()
+            .authorizeRequests()
                 .antMatchers( HttpMethod.POST, "/user").permitAll()
                 .antMatchers("/oauth/token").permitAll()
                 .antMatchers("/oauth/refresh-token/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic()
+            .httpBasic()
                 .realmName("CRM_REALM");
     }
 

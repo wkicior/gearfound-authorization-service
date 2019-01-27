@@ -14,10 +14,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
         //-- define URL patterns to enable OAuth2 security
         http.
-                anonymous().disable()
-                .requestMatchers().antMatchers("/user")
-                .and().authorizeRequests()
+            anonymous().disable()
+            .requestMatchers()
+                .antMatchers("/user")
+                .and()
+            .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/user").access("hasRole('ADMIN') or hasRole('USER')")
-                .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
+                .and()
+            .exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 }

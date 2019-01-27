@@ -35,7 +35,7 @@ class UserControllerTest {
     UserService userService;
 
     @Test
-    void getUser() throws Exception {
+    void getUserNotAuthorized() throws Exception {
         mockMvc.perform(get("/user")).andExpect(status().isUnauthorized());
     }
 
