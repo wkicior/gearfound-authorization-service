@@ -2,6 +2,7 @@ package com.gearfound.gearfoundauthorizationservice.users;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 public class UserService {
@@ -13,15 +14,22 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User addUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("User with email " + user.getEmail() + " already exists");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return this.userRepository.save(user);
+    public Mono<User> addUser(User user) {
+        return userRepository.findByEmail(user.getEmail())
+                .flatMap(existingUser -> Mono.<User>error(new UserAlreadyExistsException(existingUser.getEmail())))
+                .switchIfEmpty(encodePasswordAndSaveUser(user));
+
     }
 
-    public User getUserByName(String name) {
-        return userRepository.findByEmail(name).orElseThrow(UserNotFoundException::new);
+    private Mono<User> encodePasswordAndSaveUser(User user) {
+        return Mono.defer(() -> {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return this.userRepository.save(user);
+        });
+    }
+
+
+    public Mono<User> getUserByName(String name) {
+        return userRepository.findByEmail(name).switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException())));
     }
 }

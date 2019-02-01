@@ -1,6 +1,7 @@
 package com.gearfound.gearfoundauthorizationservice.users;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
@@ -13,8 +14,9 @@ public class UserDetailsService implements org.springframework.security.core.use
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Email "+ email +" not found"));
-        return new UserDetails(user);
+        Mono<UserDetails> userDetails = userRepository.findByEmail(email)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException())))
+                .map(UserDetails::new);
+        return userDetails.block();
     }
 }

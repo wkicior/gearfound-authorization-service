@@ -5,6 +5,7 @@ import com.gearfound.gearfoundauthorizationservice.users.User;
 import com.gearfound.gearfoundauthorizationservice.users.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -23,10 +24,15 @@ public class UserController {
     }
 
     @GetMapping()
-    public Map<String, String> getUser(Principal principal) {
-        User user = userService.getUserByName(principal.getName());
+    public Mono<Map<String, String>> getUser(Principal principal) {
+        return userService.getUserByName(principal.getName()).flatMap(
+                user -> Mono.just(getPrincipalForUser(user))
+        );
+    }
+
+    Map<String, String> getPrincipalForUser(User user) {
         Map<String, String> map = new LinkedHashMap<>();
-        map.put("name", principal.getName());
+        map.put("name", user.getEmail());
         map.put("id", user.getId());
         return map;
     }
@@ -34,7 +40,7 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public User saveUser(@RequestBody @Valid User user) {
+    public Mono<User> saveUser(@RequestBody @Valid User user) {
         user.setRoles(Collections.singletonList(new Role("USER")));
         return userService.addUser(user);
     }

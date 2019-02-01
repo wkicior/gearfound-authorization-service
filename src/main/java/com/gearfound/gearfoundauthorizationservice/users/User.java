@@ -26,4 +26,8 @@ public class User {
     private String password;
 
     private List<Role> roles;
+
+    public static org.springframework.security.core.userdetails.UserDetails toUserDetails(User user) {
+        return new UserDetails(user);
+    }
 }
