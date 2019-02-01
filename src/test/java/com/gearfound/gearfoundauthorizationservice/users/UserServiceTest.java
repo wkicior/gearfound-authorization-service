@@ -6,8 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,25 +31,29 @@ class UserServiceTest {
     @Test
     void addUser() {
         //given
-        User user = anUser().password(PASSWORD).build();
+        User user = anUser().email(EMAIL).password(PASSWORD).build();
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.empty());
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
 
         //when
-        User savedUser = userService.addUser(user);
+        Mono<User> savedUser = userService.addUser(user);
 
         //then
-        assertEquals(ENCODED_PASSWORD, savedUser.getPassword());
+        assertEquals(ENCODED_PASSWORD, savedUser.block().getPassword());
     }
 
     @Test
     void addUserThrowsExceptionWhenUserAlreadyExists() {
         //given
         User user = anUser().email(EMAIL).password(PASSWORD).build();
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.just(user));
 
-        //when, then
-        assertThrows(UserAlreadyExistsException.class, () -> userService.addUser(user));
+        //when
+        Mono<User> result = userService.addUser(user);
+
+        //then
+        assertThrows(UserAlreadyExistsException.class, result::block);
 
     }
 
@@ -58,22 +61,25 @@ class UserServiceTest {
     void getUserByEmail() {
         //given
         User user = anUser().email(EMAIL).build();
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.just(user));
 
         //when
-        User returnedUser = userService.getUserByName(EMAIL);
+        Mono<User> returnedUser = userService.getUserByName(EMAIL);
 
         //when
-        assertThat(returnedUser).isEqualTo(user);
+        assertThat(returnedUser.block()).isEqualTo(user);
     }
 
     @Test
-    void getUserByEmailThrosUserNotFoundException() {
+    void getUserByEmailThrowsUserNotFoundException() {
         //given
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.empty());
 
-        //when, then
-        assertThrows(UserNotFoundException.class, () -> userService.getUserByName(EMAIL));
+        //when
+        Mono<User> result = userService.getUserByName(EMAIL);
+
+        //then
+        assertThrows(UserNotFoundException.class, result::block);
     }
 
     private User.UserBuilder anUser() {

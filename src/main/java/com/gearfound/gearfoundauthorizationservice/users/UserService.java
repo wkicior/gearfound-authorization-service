@@ -30,6 +30,7 @@ public class UserService {
 
 
     public Mono<User> getUserByName(String name) {
-        return userRepository.findByEmail(name).switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException())));
+        return userRepository.findByEmail(name)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException())));
     }
 }
