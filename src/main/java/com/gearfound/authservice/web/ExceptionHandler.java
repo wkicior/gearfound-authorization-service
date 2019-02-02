@@ -1,7 +1,7 @@
-package com.gearfound.gearfoundauthorizationservice.web;
+package com.gearfound.authservice.web;
 
-import com.gearfound.gearfoundauthorizationservice.users.UserAlreadyExistsException;
-import com.gearfound.gearfoundauthorizationservice.users.UserNotFoundException;
+import com.gearfound.authservice.users.UserAlreadyExistsException;
+import com.gearfound.authservice.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseStatus;

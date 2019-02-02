@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.users;
+package com.gearfound.authservice.users;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.users;
+package com.gearfound.authservice.users;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.users;
+package com.gearfound.authservice.users;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

@@ -1,6 +1,6 @@
-package com.gearfound.gearfoundauthorizationservice.configuration;
+package com.gearfound.authservice.configuration;
 
-import com.gearfound.gearfoundauthorizationservice.users.UserDetailsService;
+import com.gearfound.authservice.users.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

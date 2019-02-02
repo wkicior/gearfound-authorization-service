@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice;
+package com.gearfound.authservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

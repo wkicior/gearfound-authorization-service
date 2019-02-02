@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.users;
+package com.gearfound.authservice.users;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

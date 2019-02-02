@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.users;
+package com.gearfound.authservice.users;
 
 public class UserNotFoundException extends RuntimeException {
 }

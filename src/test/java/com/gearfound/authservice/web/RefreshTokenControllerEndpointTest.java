@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.web;
+package com.gearfound.authservice.web;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

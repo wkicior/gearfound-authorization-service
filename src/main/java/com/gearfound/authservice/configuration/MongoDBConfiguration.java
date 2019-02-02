@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.configuration;
+package com.gearfound.authservice.configuration;
 
 
 import com.mongodb.reactivestreams.client.MongoClient;

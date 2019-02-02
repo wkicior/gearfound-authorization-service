@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.configuration;
+package com.gearfound.authservice.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

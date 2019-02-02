@@ -1,8 +1,8 @@
-package com.gearfound.gearfoundauthorizationservice.web;
+package com.gearfound.authservice.web;
 
-import com.gearfound.gearfoundauthorizationservice.users.Role;
-import com.gearfound.gearfoundauthorizationservice.users.User;
-import com.gearfound.gearfoundauthorizationservice.users.UserService;
+import com.gearfound.authservice.users.Role;
+import com.gearfound.authservice.users.User;
+import com.gearfound.authservice.users.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;

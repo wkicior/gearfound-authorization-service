@@ -1,9 +1,9 @@
-package com.gearfound.gearfoundauthorizationservice.web;
+package com.gearfound.authservice.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gearfound.gearfoundauthorizationservice.users.User;
-import com.gearfound.gearfoundauthorizationservice.users.UserAlreadyExistsException;
-import com.gearfound.gearfoundauthorizationservice.users.UserService;
+import com.gearfound.authservice.users.User;
+import com.gearfound.authservice.users.UserAlreadyExistsException;
+import com.gearfound.authservice.users.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

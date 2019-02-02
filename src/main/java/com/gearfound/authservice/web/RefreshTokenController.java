@@ -1,4 +1,4 @@
-package com.gearfound.gearfoundauthorizationservice.web;
+package com.gearfound.authservice.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
