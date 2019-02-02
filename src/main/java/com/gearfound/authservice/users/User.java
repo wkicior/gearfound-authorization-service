@@ -14,6 +14,8 @@ import java.util.List;
 @Setter
 @Getter
 @Document
+@ToString(exclude = "password")
+@EqualsAndHashCode
 public class User {
     @Id
     private String id;

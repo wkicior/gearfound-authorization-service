@@ -4,33 +4,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebFluxTest
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {TestSecurityConfiguration.class, RefreshTokenController.class, ExceptionHandler.class})
 class RefreshTokenControllerEndpointTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-
+    protected WebTestClient webClient;
 
     @MockBean
     TokenStore tokenStore;
 
     @Test
     void revokeToken() throws Exception {
-        mockMvc.perform(delete("/oauth/refresh-token/1234")).andExpect(status().isNoContent());
+        webClient.delete().uri("/oauth/refresh-token/1234")
+                .exchange()
+                .expectStatus().isNoContent();
         Mockito.verify(tokenStore).removeRefreshToken(new DefaultOAuth2RefreshToken("1234"));
     }
 }

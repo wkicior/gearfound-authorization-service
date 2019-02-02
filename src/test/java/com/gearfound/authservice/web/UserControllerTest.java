@@ -7,55 +7,62 @@ import com.gearfound.authservice.users.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+
+@WebFluxTest
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {TestSecurityConfiguration.class, UserController.class, ExceptionHandler.class})
 class UserControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    protected WebTestClient webClient;
 
     @Autowired private ObjectMapper mapper;
 
     @MockBean
     UserService userService;
 
+    @MockBean
+    TokenStore tokenStore;
+
     @Test
     void getUserNotAuthorized() throws Exception {
-        mockMvc.perform(get("/user")).andExpect(status().isUnauthorized());
+        webClient.get().uri("/user")
+                .exchange()
+                .expectStatus().isUnauthorized();
     }
 
+    @Test
+    void postUser() throws Exception {
+        //given
+        User user = User.builder()
+                .email("some@test.pl")
+                .password("mypass")
+                .build();
+        when(userService.addUser(any(User.class))).thenReturn(Mono.just(user));
 
-    // disabled due to webflux problem
-//    @Test
-//    void postUser() throws Exception {
-//        //given
-//        User user = User.builder()
-//                .email("some@test.pl")
-//                .password("mypass")
-//                .build();
-//        when(userService.addUser(any(User.class))).thenReturn(Mono.just(user));
-//
-//        //when, then
-//        mockMvc.perform(post("/user")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(mapper.writeValueAsString(user)))
-//                .andExpect(status().isCreated())
-//                .andExpect(content().json(mapper.writeValueAsString(user)));
-//    }
+        //when, then
+        webClient.post().uri("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(user))
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(User.class)
+                .isEqualTo(user);
+    }
 
     @Test
     void postUserWhichAlreadyExists() throws Exception {
@@ -67,9 +74,11 @@ class UserControllerTest {
         when(userService.addUser(any(User.class))).thenThrow(new UserAlreadyExistsException("already exists"));
 
         //when, then
-        mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(user)))
-                .andExpect(status().isConflict());
+        webClient.post().uri("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(user))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT);
     }
 
     @Test
@@ -81,8 +90,10 @@ class UserControllerTest {
                 .build();
 
         //when, then
-        mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(user)))
-                .andExpect(status().isBadRequest());
+        webClient.post().uri("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(user))
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 }
