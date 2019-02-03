@@ -24,17 +24,11 @@ public class UserController {
     }
 
     @GetMapping()
+    @CrossOrigin(origins = "http://localhost:4200")
     public Mono<Map<String, String>> getUser(Principal principal) {
         return userService.getUserByName(principal.getName()).flatMap(
                 user -> Mono.just(getPrincipalForUser(user))
         );
-    }
-
-    Map<String, String> getPrincipalForUser(User user) {
-        Map<String, String> map = new LinkedHashMap<>();
-        map.put("name", user.getEmail());
-        map.put("id", user.getId());
-        return map;
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
@@ -43,5 +37,12 @@ public class UserController {
     public Mono<User> saveUser(@RequestBody @Valid User user) {
         user.setRoles(Collections.singletonList(new Role("USER")));
         return userService.addUser(user);
+    }
+
+    Map<String, String> getPrincipalForUser(User user) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("name", user.getEmail());
+        map.put("id", user.getId());
+        return map;
     }
 }
