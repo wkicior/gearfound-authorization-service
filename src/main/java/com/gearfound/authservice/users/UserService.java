@@ -14,10 +14,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Mono<User> addUser(User user) {
+    public Mono<UserInfo> addUser(User user) {
+        user.normalize();
         return userRepository.findByEmail(user.getEmail())
                 .flatMap(existingUser -> Mono.<User>error(new UserAlreadyExistsException(existingUser.getEmail())))
-                .switchIfEmpty(encodePasswordAndSaveUser(user));
+                .switchIfEmpty(encodePasswordAndSaveUser(user))
+                .map(User::toUserInfo);
 
     }
 
@@ -29,8 +31,9 @@ public class UserService {
     }
 
 
-    public Mono<User> getUserByName(String name) {
-        return userRepository.findByEmail(name)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException())));
+    public Mono<UserInfo> getUserByName(String name) {
+        return userRepository.findByEmail(name.toLowerCase())
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException())))
+                .map(User::toUserInfo);
     }
 }

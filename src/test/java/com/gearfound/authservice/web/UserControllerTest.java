@@ -3,6 +3,7 @@ package com.gearfound.authservice.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gearfound.authservice.users.User;
 import com.gearfound.authservice.users.UserAlreadyExistsException;
+import com.gearfound.authservice.users.UserInfo;
 import com.gearfound.authservice.users.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +53,7 @@ class UserControllerTest {
                 .email("some@test.pl")
                 .password("mypass")
                 .build();
-        when(userService.addUser(any(User.class))).thenReturn(Mono.just(user));
+        when(userService.addUser(any(User.class))).thenReturn(Mono.just(user.toUserInfo()));
 
         //when, then
         webClient.post().uri("/user")
@@ -60,8 +61,8 @@ class UserControllerTest {
                 .body(BodyInserters.fromObject(user))
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody(User.class)
-                .isEqualTo(user);
+                .expectBody(UserInfo.class)
+                .isEqualTo(user.toUserInfo());
     }
 
     @Test

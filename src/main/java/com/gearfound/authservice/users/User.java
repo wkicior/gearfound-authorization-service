@@ -32,4 +32,12 @@ public class User {
     public static org.springframework.security.core.userdetails.UserDetails toUserDetails(User user) {
         return new UserDetails(user);
     }
+
+    void normalize() {
+        this.setEmail(email.toLowerCase());
+    }
+
+    public UserInfo toUserInfo() {
+        return new UserInfo(id, email, roles);
+    }
 }

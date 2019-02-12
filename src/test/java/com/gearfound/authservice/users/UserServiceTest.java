@@ -29,7 +29,7 @@ class UserServiceTest {
     UserService userService;
 
     @Test
-    void addUser() {
+    void addUserSavesUserAndReturnsUserInfo() {
         //given
         User user = anUser().email(EMAIL).password(PASSWORD).build();
         when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.empty());
@@ -37,10 +37,25 @@ class UserServiceTest {
         when(userRepository.save(user)).thenReturn(Mono.just(user));
 
         //when
-        Mono<User> savedUser = userService.addUser(user);
+        Mono<UserInfo> savedUser = userService.addUser(user);
 
         //then
-        assertEquals(ENCODED_PASSWORD, savedUser.block().getPassword());
+        assertEquals(EMAIL, savedUser.block().getEmail());
+    }
+
+    @Test
+    void addUserNormalizesUserBeforeSave() {
+        //given
+        User user = anUser().email(EMAIL.toUpperCase()).password(PASSWORD).build();
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.empty());
+        when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
+
+        //when
+        Mono<UserInfo> savedUser = userService.addUser(user);
+
+        //then
+        assertEquals(EMAIL.toLowerCase(), savedUser.block().getEmail());
     }
 
     @Test
@@ -50,7 +65,7 @@ class UserServiceTest {
         when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.just(user));
 
         //when
-        Mono<User> result = userService.addUser(user);
+        Mono<UserInfo> result = userService.addUser(user);
 
         //then
         assertThrows(UserAlreadyExistsException.class, result::block);
@@ -58,16 +73,29 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserByEmail() {
+    void getUserByEmailReturnsUserByUsername() {
         //given
         User user = anUser().email(EMAIL).build();
         when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.just(user));
 
         //when
-        Mono<User> returnedUser = userService.getUserByName(EMAIL);
+        Mono<UserInfo> returnedUser = userService.getUserByName(EMAIL);
 
         //when
-        assertThat(returnedUser.block()).isEqualTo(user);
+        assertThat(returnedUser.block()).isEqualTo(user.toUserInfo());
+    }
+
+    @Test
+    void getUserByEmailReturnsUserByUsernameForUppercaseQuery() {
+        //given
+        User user = anUser().email(EMAIL.toLowerCase()).build();
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.just(user));
+
+        //when
+        Mono<UserInfo> returnedUser = userService.getUserByName(EMAIL.toUpperCase());
+
+        //when
+        assertThat(returnedUser.block()).isEqualTo(user.toUserInfo());
     }
 
     @Test
@@ -76,7 +104,7 @@ class UserServiceTest {
         when(userRepository.findByEmail(EMAIL)).thenReturn(Mono.empty());
 
         //when
-        Mono<User> result = userService.getUserByName(EMAIL);
+        Mono<UserInfo> result = userService.getUserByName(EMAIL);
 
         //then
         assertThrows(UserNotFoundException.class, result::block);
